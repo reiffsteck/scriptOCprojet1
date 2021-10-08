@@ -70,7 +70,6 @@ function CreaUser
 
     #inserer un utilisateur dans un groupe
     Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurFonction ($UtilisateurNom $UtilisateurPrenom)"
-    #Add-ADGroupMember  Stagiaires -Members  "CN=$UtilisateurLogin,OU=Stagiaires,OU=Services,DC=ACME,DC=FR"
     Add-ADGroupMember  $UtilisateurFonction -Members  "CN=$UtilisateurLogin,OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR"
 
      # creation de l'utilisateur critique
