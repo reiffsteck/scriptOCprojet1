@@ -1,17 +1,17 @@
-﻿cmdcrea4user 
-#test des variables simples ok
-#pble sur la boucle foreach if else, un utilisateur creer, celui de la fin du fichier CSV
-#menage dans les commentaires
+﻿#cmdcrea5user 
+#pble sur la boucle foreach if else, utilisateur creer fichier CSV
+#revoir les conditions si l'utilisateur existe déjà 
+#prevoir de mettre le bon user dans le bon UO
 
  # importation du fichier CSV
 
-#$CSVFile = "C:\Scripts\AD_USERS\Utilisateurs.csv"
-$CSVData = Import-CSV -Path  "C:\Scripts\AD_USERS\Utilisateurs.csv" -Delimiter ";" -Encoding UTF8
+ $CSVData = Import-CSV -Path "C:\Scripts\AD_USERS\Utilisateurs.csv" -Delimiter ";" -Encoding UTF8
  Write-Host "Fichier Importé"
 
- #$Utilisateur= (Import-csv -path c:\Scripts\AD_USERS\Utilisateurs.csv -Delimiter ";" -Encoding UTF8).Nom
+ #nombre d'utilisateur dans la liste
+" il y a {0} utilisateurs dans le tableau" -F ($CSVData.count)
 
- 
+
  #lister les variables
  
   Foreach($Utilisateur in $CSVData)
@@ -31,17 +31,14 @@ $CSVData = Import-CSV -Path  "C:\Scripts\AD_USERS\Utilisateurs.csv" -Delimiter "
  if (Get-ADUser -Filter {SamAccountName -eq $UtilisateurLogin})
  {
     Write-Warning "L'identifiant $UtilisateurLogin existe déjà dans l'AD"
+    Get-ADUser -Identity $UtilisateurLogin
  }
  else 
  # creation de l'utilisateur
  {
- # une seule ligne de commande pour creer un utilisateur déjà défini dans une UO standard Users
  
- #ligne origine
- #New-ADUser -Name "$UtilisateurNom , $UtilisateurPrenom"  -DisplayName "$UtilisateurNom , $UtilisateurPrenom" -GivenName $UtilisateurPrenom -Surname $UtilisateurNom -SamAccountName $UtilisateurLogin -UserPrincipalName "$UtilisateurLogin@acme.fr" -EmailAddress $UtilisateurEmail -Title $UtilisateurFonction -Path "OU=Users,DC=ACME,DC=FR" -AccountPassword(ConvertTo-SecureString -AsPlainText Ricohricoh -Force) -PasswordNeverExpires $true -ChangePasswordAtLogon $false -CannotChangePassword $false
  
  New-ADUser -Name $UtilisateurNom  -DisplayName $UtilisateurNom -GivenName $UtilisateurPrenom -Surname $UtilisateurNom -SamAccountName $UtilisateurLogin -UserPrincipalName "$UtilisateurLogin@acme.fr" -EmailAddress $UtilisateurEmail -Path "OU=Stagiaires,OU=Services,DC=ACME,DC=FR" -AccountPassword(ConvertTo-SecureString -AsPlainText Ricoh80700 -Force) -PasswordNeverExpires $true -ChangePasswordAtLogon $false -CannotChangePassword $false -Enable $true
- #New-ADUser -Name Solbes  -DisplayName Solbes -GivenName Ludovic -Surname Solbes -SamAccountName LSolbes -UserPrincipalName LSolbes@acme.fr -EmailAddress LSolbes@acme.fr -Title Titre -Path "OU=Users,DC=ACME,DC=FR" -AccountPassword(ConvertTo-SecureString -AsPlainText Ricohricoh -Force) -PasswordNeverExpires $true -ChangePasswordAtLogon $false -CannotChangePassword $false
  
  #ecriture de la creation de l'utlisateur
  Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
