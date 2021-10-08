@@ -1,11 +1,6 @@
 ﻿<#revoir les conditions si l'utilisateur existe déjà 
-prevoir de mettre le bon user dans le bon UO
-integrer les users dans les groupes
 mot de passe dans le fichier ou defini par defaut avec chgt obligatoire
 groupe critique a introduire
-
-creation du bon format de login et nom user
-
 #>
 param ( 
     [string ]$n = ' ' , 
@@ -15,17 +10,15 @@ param (
     [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr" ,
     [string] $UtilisateurMotDePasse = "Ricoh80700" ,
     [string] $UtilisateurFonction ,
-    [string] $UtilisateurOU 
+    [string] $UtilisateurOU ,
+    [string] $UtilisateurCritique
       )
                  
 Clear-Host
 
-
 #declaration de la fonction Creauser
-
 function CreaUser {
-
-    #lister les variables
+    
     param (
         [string] $UtilisateurPrenom = $Utilisateur.Prenom ,
         [string] $UtilisateurNom = $Utilisateur.Nom ,
@@ -33,9 +26,11 @@ function CreaUser {
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr" ,
         [string] $UtilisateurMotDePasse = "Ricoh80700" ,
         [string] $UtilisateurFonction = $Utilisateur.Fonction ,
-        [string] $UtilisateurOU = $Utilisateur.Departement
-        # a completer pour faire une creation plus fine
+        [string] $UtilisateurOU = $Utilisateur.Departement,
+        [string] $UtilisateurCritique
+        
           )
+          # a completer pour faire une creation plus fine
         
     # creation de l'utilisateur, coeur de la foncion
     New-ADUser -Name $UtilisateurLogin `
@@ -69,6 +64,18 @@ function CreaUser {
     #Add-ADGroupMember  Stagiaires -Members  "CN=$UtilisateurLogin,OU=Stagiaires,OU=Services,DC=ACME,DC=FR"
     Add-ADGroupMember  $UtilisateurFonction -Members  "CN=$UtilisateurLogin,OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR"
 
+     # creation de l'utilisateur critique
+    if ($UtilisateurCritique -eq "critique")
+        {
+            Write-Output "l'utilisateur" $UtilisateurCritique "est critique"
+            Add-ADGroupMember Critique -Members "CN=$UtilisateurLogin,OU=Critique,OU=Services,DC=ACME,DC=FR"
+        }
+        else 
+        {
+            Write-Output "l'utilisateur " $UtilisateurLogin "n'est pas un utilisateur critique"
+        }
+
+
     Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail a ete cree"
     Write-Host " fonction CreaUser"
       
@@ -100,8 +107,8 @@ function CreaUserSeul  {
         [string] $UtilisateurLogin ,
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr" ,
         [string] $UtilisateurMotDePasse = "Ricoh80700" ,
-        [string] $UtilisateurFonction 
-        #[string] $UtilisateurOU 
+        [string] $UtilisateurFonction ,
+        [string] $UtilisateurCritique 
  # a completer pour faire une creation plus fine
           )
 
@@ -121,6 +128,7 @@ function CreaUserSeul  {
         #Write-Output "la fonction de l'utilsateur est " $UtilisateurFonction
         $UtilisateurEmail =Read-Host " quel est l'adresse mail de l'utilisateur"
         Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
+        $UtilisateurCritique =Read-Host "L'utilsateur est il critique? Si oui , ecrire critique"
        # voir pour OU apres les tests
 
       # CreaUserSeul
@@ -152,6 +160,17 @@ function CreaUserSeul  {
         #inserer un utilisateur dans un groupe
         Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurFonction ($UtilisateurNom $UtilisateurPrenom)"
         Add-ADGroupMember $UtilisateurFonction -Members  "CN=$UtilisateurLogin,OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR"
+
+        # creation de l'utilisateur critique
+        if ($UtilisateurCritique -eq "critique")
+        {
+            Write-Output "l'utilisateur" $UtilisateurCritique "est critique"
+            Add-ADGroupMember Critique -Members "CN=$UtilisateurLogin,OU=Critique,OU=Services,DC=ACME,DC=FR"
+        }
+        else 
+        {
+            Write-Output "l'utilisateur " $UtilisateurLogin "n'est pas un utilisateur critique"
+        }
 
         Write-Host " l'uilisateur "$UtilisateurLogin $UtilisateurEmail" a ete cree"
         Write-Host " fonction CreaUserSeul"
