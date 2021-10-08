@@ -1,10 +1,16 @@
-﻿#cmdcrea3user mise en place des variables simple et de foreach if else
-# remplacement de LSolbes par les varialbes dans la ligne cmd New-ADUser
+﻿cmdcrea4user 
+#test des variables simples ok
+#pble sur la boucle foreach if else, un utilisateur creer, celui de la fin du fichier CSV
+#menage dans les commentaires
 
  # importation du fichier CSV
 
- $CSVFile = "C:\Scripts\AD_USERS\Utilisateurs.csv"
- $CSVData = Import-CSV -Path $CSVFile -Delimiter ";" -Encoding UTF8
+#$CSVFile = "C:\Scripts\AD_USERS\Utilisateurs.csv"
+$CSVData = Import-CSV -Path  "C:\Scripts\AD_USERS\Utilisateurs.csv" -Delimiter ";" -Encoding UTF8
+ Write-Host "Fichier Importé"
+
+ #$Utilisateur= (Import-csv -path c:\Scripts\AD_USERS\Utilisateurs.csv -Delimiter ";" -Encoding UTF8).Nom
+
  
  #lister les variables
  
