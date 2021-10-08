@@ -65,7 +65,7 @@ function CreaUser {
     New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin
 
     #inserer un utilisateur dans un groupe
-    Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
+    Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurFonction ($UtilisateurNom $UtilisateurPrenom)"
     #Add-ADGroupMember  Stagiaires -Members  "CN=$UtilisateurLogin,OU=Stagiaires,OU=Services,DC=ACME,DC=FR"
     Add-ADGroupMember  $UtilisateurFonction -Members  "CN=$UtilisateurLogin,OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR"
 
@@ -100,7 +100,7 @@ function CreaUserSeul  {
         [string] $UtilisateurLogin ,
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr" ,
         [string] $UtilisateurMotDePasse = "Ricoh80700" ,
-        [string] $UtilisateurFonction  
+        [string] $UtilisateurFonction 
         #[string] $UtilisateurOU 
  # a completer pour faire une creation plus fine
           )
@@ -131,7 +131,6 @@ function CreaUserSeul  {
             -SamAccountName $UtilisateurLogin `
             -UserPrincipalName "$UtilisateurLogin@acme.fr" `
             -EmailAddress $UtilisateurEmail `
-            #-Path "OU=Stagiaires,OU=Services,DC=ACME,DC=FR" `
             -Path "OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR" `
             -AccountPassword(ConvertTo-SecureString -AsPlainText Ricoh80700 -Force) `
             -PasswordNeverExpires $true `
