@@ -17,9 +17,9 @@ param (
 Clear-Host
 
 #declaration de la fonction Creauser
-function CreaUser {
-    
-    param (
+function CreaUser
+{
+       param (
         [string] $UtilisateurPrenom = $Utilisateur.Prenom ,
         [string] $UtilisateurNom = $Utilisateur.Nom ,
         [string] $UtilisateurLogin = ($UtilisateurPrenom).Substring(0, 1) + $UtilisateurNom ,
@@ -27,12 +27,21 @@ function CreaUser {
         [string] $UtilisateurMotDePasse = "Ricoh80700" ,
         [string] $UtilisateurFonction = $Utilisateur.Fonction ,
         [string] $UtilisateurOU = $Utilisateur.Departement,
-        [string] $UtilisateurCritique
-        
+        [string] $UtilisateurCritique = $Utilisateur.Critique,
+        [string] $UtilisateurActif = $Utilisateur.Actif ,
+        [boolean] $UserActif
           )
           # a completer pour faire une creation plus fine
-        
-    # creation de l'utilisateur, coeur de la foncion
+        if ($utilsateurActif -eq 'oui')
+        { 
+            $UserActif = $true
+        }
+        else 
+        { 
+            $UserActif = $false
+        }
+    # creation de l'utilisateur, coeur de la fonction
+    # remplacer utilisateur fonction
     New-ADUser -Name $UtilisateurLogin `
                -DisplayName $UtilisateurLogin `
                -GivenName $UtilisateurPrenom `
@@ -45,7 +54,7 @@ function CreaUser {
                -PasswordNeverExpires $true `
                -ChangePasswordAtLogon $false `
                -CannotChangePassword $false `
-               -Enable $true
+               -Enable $UserActif
     #-Path "OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
 
     #ecriture de la creation de l'utlisateur
@@ -65,14 +74,16 @@ function CreaUser {
     Add-ADGroupMember  $UtilisateurFonction -Members  "CN=$UtilisateurLogin,OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR"
 
      # creation de l'utilisateur critique
-    if ($UtilisateurCritique -eq "critique")
+    if ($UtilisateurCritique -eq 'oui')
         {
-            Write-Output "l'utilisateur" $UtilisateurCritique "est critique"
-            Add-ADGroupMember Critique -Members "CN=$UtilisateurLogin,OU=Critique,OU=Services,DC=ACME,DC=FR"
+            Write-Output "l'utilisateur" $UtilisateurLogin "est critique"
+            #Add-ADGroupMember Critique -Members "CN=$UtilisateurLogin,OU=Critique,OU=Services,DC=ACME,DC=FR"
+            Add-ADGroupMember -Identity "CN=Critique,OU=Critique,OU=Services,DC=acme,DC=fr" -Members $UtilisateurLogin
         }
         else 
         {
             Write-Output "l'utilisateur " $UtilisateurLogin "n'est pas un utilisateur critique"
+            Write-Output $UtilisateurCritique
         }
 
 
@@ -80,6 +91,7 @@ function CreaUser {
     Write-Host " fonction CreaUser"
       
                   }
+                
 
 # declaration de la fonction 2 exituser
 function ExistUser {
@@ -108,7 +120,9 @@ function CreaUserSeul  {
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr" ,
         [string] $UtilisateurMotDePasse = "Ricoh80700" ,
         [string] $UtilisateurFonction ,
-        [string] $UtilisateurCritique 
+        [string] $UtilisateurCritique ,
+        [string] $UtilisateurActif = $Utilisateur.Actif ,
+        [boolean] $UserActif
  # a completer pour faire une creation plus fine
           )
 
@@ -129,6 +143,19 @@ function CreaUserSeul  {
         $UtilisateurEmail =Read-Host " quel est l'adresse mail de l'utilisateur"
         Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
         $UtilisateurCritique =Read-Host "L'utilsateur est il critique? Si oui , ecrire critique"
+        $UtilsateurActif = Read-Host "l'utilisateur est il actif oui ou non"
+        
+
+        if ($utilsateurActif -eq 'oui')
+        { 
+            $UserActif = $true
+            Write-output $UtilisateurActif " est actif"
+        }
+        else 
+        { 
+            $UserActif = $false
+            Write-Output $UtilisateurActif " n'est pas actif"
+        }
        # voir pour OU apres les tests
 
       # CreaUserSeul
@@ -144,7 +171,7 @@ function CreaUserSeul  {
             -PasswordNeverExpires $true `
             -ChangePasswordAtLogon $false `
             -CannotChangePassword $false `
-            -Enable $true
+            -Enable $UserActif
       
         #ecriture de la creation de l'utlisateur
         Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
@@ -162,14 +189,15 @@ function CreaUserSeul  {
         Add-ADGroupMember $UtilisateurFonction -Members  "CN=$UtilisateurLogin,OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR"
 
         # creation de l'utilisateur critique
-        if ($UtilisateurCritique -eq "critique")
+        if ($UtilisateurCritique -eq 'oui')
         {
-            Write-Output "l'utilisateur" $UtilisateurCritique "est critique"
-            Add-ADGroupMember Critique -Members "CN=$UtilisateurLogin,OU=Critique,OU=Services,DC=ACME,DC=FR"
+            Write-Output "l'utilisateur" $UtilisateurLogin "est critique"
+            Add-ADGroupMember -Identity "CN=Critique,OU=Critique,OU=Services,DC=acme,DC=fr" -Members $UtilisateurLogin
         }
         else 
         {
             Write-Output "l'utilisateur " $UtilisateurLogin "n'est pas un utilisateur critique"
+            Write-Output $UtilisateurCritique
         }
 
         Write-Host " l'uilisateur "$UtilisateurLogin $UtilisateurEmail" a ete cree"
@@ -189,7 +217,8 @@ function Get-info () {
                                     [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr" ,
                                     [string] $UtilisateurMotDePasse = "Ricoh80700" ,
                                     [string] $UtilisateurFonction ,
-                                    [string] $UtilisateurOU 
+                                    [string] $UtilisateurOU ,
+                                    [string] $UtilisateurCritique 
                                   )
                                   Write-Host $n
        if ($n -eq ' ' )
@@ -215,7 +244,8 @@ function Get-info () {
                     $UtilisateurEmail = "$UtilisateurLogin@acme.fr"
                     $UtilisateurMotDePasse = "Ricoh80700"
                     $UtilisateurFonction = $Utilisateur.Fonction
-                    $UtilisateurOU = $Utilisateur.Departement  
+                    $UtilisateurOU = $Utilisateur.Departement 
+                    $UtilisateurCritique =$Utilisateur.Critique 
                     # Vérifier la présence de l'utilisateur dans l'AD
                     # fonction de test utilisateur
 
