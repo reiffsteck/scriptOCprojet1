@@ -56,8 +56,7 @@ function CreaUser
                -ChangePasswordAtLogon $false `
                -CannotChangePassword $false `
                -Enable $UserActif
-    #-Path "OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
-
+    
     #ecriture de la creation de l'utlisateur
     Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
 
@@ -93,7 +92,7 @@ function CreaUser
                   }
                 
 
-# declaration de la fonction 2 exituser
+# declaration de la fonction exituser
 function ExistUser {
 
     #lister les variables
@@ -102,13 +101,10 @@ function ExistUser {
         [string] $UtilisateurNom = $Utilisateur.Nom ,
         [string] $UtilisateurLogin = ($UtilisateurPrenom).Substring(0, 1) + $UtilisateurNom ,
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr"                
-        #[string] $UtilisateurMotDePasse = "Ricoh80700" ,
-        #[string] $UtilisateurFonction = $Utilisateur.Fonction ,
-        #[string] $UtilisateurOU = $Utilisateur.Departement
-        # a completer pour faire une creation plus fine
+        
           )
                  Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail existe deja dans L'AD"
-                 Write-Host "fonction ExistUser"
+                
                     }   
 
 function CreaUserSeul  {
@@ -136,10 +132,8 @@ function CreaUserSeul  {
         Write-Output "le login est" $UtilisateurLogin
         Write-host " Vous devez définir le service de l'utilisateur, vous avez plusieurs choix"
         Write-host " DirectionFinanciere, DirectionGenerale, DirectionMarketing, DirectionTechnique, RessourcesHumaines"
-        $UtilisateurFonction =Read-Host "quel est le service, choix multiple"
+        $UtilisateurFonction =Read-Host "quel est le service"
         Write-Output "le service de l'utilsateur est " $UtilisateurFonction
-        #$UtilisateurFonction =Read-host "quel est la fonction"
-        #Write-Output "la fonction de l'utilsateur est " $UtilisateurFonction
         $UtilisateurEmail =Read-Host " quel est l'adresse mail de l'utilisateur"
         Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
         $UtilisateurCritique =Read-Host "L'utilsateur est il critique? Si oui , ecrire critique"
@@ -156,8 +150,7 @@ function CreaUserSeul  {
             $UserActif = $false
             Write-Output $UtilisateurActif " n'est pas actif"
         }
-       # voir pour OU apres les tests
-
+       
       # CreaUserSeul
         New-ADUser -Name $UtilisateurLogin `
             -DisplayName $UtilisateurLogin `
