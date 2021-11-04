@@ -11,7 +11,8 @@ param (
     [string] $UtilisateurMotDePasse = "Ricoh80700" ,
     [string] $UtilisateurFonction ,
     [string] $UtilisateurOU ,
-    [string] $UtilisateurCritique
+    [string] $UtilisateurCritique,
+    [boolean] $UserActif
       )
                  
 Clear-Host
