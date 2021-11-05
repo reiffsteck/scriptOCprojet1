@@ -1,8 +1,4 @@
-﻿<#revoir les conditions si l'utilisateur existe déjà 
-mot de passe dans le fichier ou defini par defaut avec chgt obligatoire
-groupe critique a introduire
-#>
-param ( 
+﻿param ( 
     [string ]$n = ' ' , 
     [string] $UtilisateurPrenom ,
     [string] $UtilisateurNom  ,
@@ -12,6 +8,7 @@ param (
     [string] $UtilisateurFonction ,
     [string] $UtilisateurOU ,
     [string] $UtilisateurCritique,
+    [string] $UtilisateurActif ,
     [boolean] $UserActif
       )
                  
@@ -33,13 +30,17 @@ function CreaUser
         [boolean] $UserActif
           )
           # a completer pour faire une creation plus fine
-        if ($utilsateurActif -eq 'oui')
+        if ($UtilisateurActif -eq 'oui' )
         { 
+        Write-Output $UtilisateurActif
             $UserActif = $true
+            Write-Output $UserActif
         }
         else 
         { 
+           Write-Output $UtilisateurActif
             $UserActif = $false
+             Write-Output $UserActif
         }
     # creation de l'utilisateur, coeur de la fonction
     # remplacer utilisateur fonction
@@ -50,13 +51,18 @@ function CreaUser
                -SamAccountName $UtilisateurLogin `
                -UserPrincipalName "$UtilisateurLogin@acme.fr" `
                -EmailAddress $UtilisateurEmail `
-               -Path "OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR" `
+               -Path "OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR" `
                -AccountPassword(ConvertTo-SecureString -AsPlainText Ricoh80700 -Force) `
+               -Company "ACME" `
+               -Description $UtilisateurFonction `
+               -Office $UtilisateurOU `
+               -Department $UtilisateurOU `
                -PasswordNeverExpires $true `
                -ChangePasswordAtLogon $false `
                -CannotChangePassword $false `
-               -Enable $UserActif
-    
+               -Enabled $UserActif
+   
+
     #ecriture de la creation de l'utlisateur
     Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
 
@@ -69,8 +75,8 @@ function CreaUser
     New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin
 
     #inserer un utilisateur dans un groupe
-    Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurFonction ($UtilisateurNom $UtilisateurPrenom)"
-    Add-ADGroupMember  $UtilisateurFonction -Members  "CN=$UtilisateurLogin,OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR"
+    Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
+    Add-ADGroupMember  $UtilisateurOU -Members  "CN=$UtilisateurLogin,OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
 
      # creation de l'utilisateur critique
     if ($UtilisateurCritique -eq 'oui')
@@ -86,13 +92,13 @@ function CreaUser
         }
 
 
-    Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail a ete cree"
+    Write-Host " l'utilisateur $UtilisateurLogin $UtilisateurEmail a ete cree"
     Write-Host " fonction CreaUser"
       
                   }
                 
 
-# declaration de la fonction exituser
+# declaration de la fonction 2 exituser
 function ExistUser {
 
     #lister les variables
@@ -101,10 +107,9 @@ function ExistUser {
         [string] $UtilisateurNom = $Utilisateur.Nom ,
         [string] $UtilisateurLogin = ($UtilisateurPrenom).Substring(0, 1) + $UtilisateurNom ,
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr"                
-        
           )
                  Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail existe deja dans L'AD"
-                
+                 Write-Host "fonction ExistUser"
                     }   
 
 function CreaUserSeul  {
@@ -116,6 +121,7 @@ function CreaUserSeul  {
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr" ,
         [string] $UtilisateurMotDePasse = "Ricoh80700" ,
         [string] $UtilisateurFonction ,
+        [string] $UtilisateurOU ,
         [string] $UtilisateurCritique ,
         [string] $UtilisateurActif = $Utilisateur.Actif ,
         [boolean] $UserActif
@@ -130,16 +136,15 @@ function CreaUserSeul  {
         Write-Output " le prenom est " $UtilisateurPrenom
         $UtilisateurLogin =Read-Host " quel est le login de l'utilisateur"
         Write-Output "le login est" $UtilisateurLogin
+        $UtilisateurEmail = "$UtilisateurLogin@acme.fr"
+        Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
         Write-host " Vous devez définir le service de l'utilisateur, vous avez plusieurs choix"
         Write-host " DirectionFinanciere, DirectionGenerale, DirectionMarketing, DirectionTechnique, RessourcesHumaines"
-        $UtilisateurFonction =Read-Host "quel est le service"
-        Write-Output "le service de l'utilsateur est " $UtilisateurFonction
-        $UtilisateurEmail =Read-Host " quel est l'adresse mail de l'utilisateur"
-        Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
+        $UtilisateurOU =Read-Host "quel est le service, choix multiple"
+        Write-Output "le service de l'utilsateur est " $UtilisateurOU
         $UtilisateurCritique =Read-Host "L'utilsateur est il critique? Si oui , ecrire critique"
         $UtilsateurActif = Read-Host "l'utilisateur est il actif oui ou non"
         
-
         if ($utilsateurActif -eq 'oui')
         { 
             $UserActif = $true
@@ -150,36 +155,38 @@ function CreaUserSeul  {
             $UserActif = $false
             Write-Output $UtilisateurActif " n'est pas actif"
         }
-       
+       # voir pour OU apres les tests
+
       # CreaUserSeul
-        New-ADUser -Name $UtilisateurLogin `
-            -DisplayName $UtilisateurLogin `
-            -GivenName $UtilisateurPrenom `
-            -Surname $UtilisateurNom `
-            -SamAccountName $UtilisateurLogin `
-            -UserPrincipalName "$UtilisateurLogin@acme.fr" `
-            -EmailAddress $UtilisateurEmail `
-            -Path "OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR" `
-            -AccountPassword(ConvertTo-SecureString -AsPlainText Ricoh80700 -Force) `
-            -PasswordNeverExpires $true `
-            -ChangePasswordAtLogon $false `
-            -CannotChangePassword $false `
-            -Enable $UserActif
+      New-ADUser -Name $UtilisateurLogin `
+                -DisplayName $UtilisateurLogin `
+                -GivenName $UtilisateurPrenom `
+                -Surname $UtilisateurNom `
+                -SamAccountName $UtilisateurLogin `
+                -UserPrincipalName "$UtilisateurLogin@acme.fr" `
+                -EmailAddress $UtilisateurEmail `
+                -Path "OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR" `
+                -AccountPassword(ConvertTo-SecureString -AsPlainText Ricoh80700 -Force) `
+                -Company "ACME" `
+                -Description $UtilisateurFonction `
+                -Office $UtilisateurOU `
+                -Department $UtilisateurOU `
+                -PasswordNeverExpires $true `
+                -ChangePasswordAtLogon $false `
+                -CannotChangePassword $false `
+                -Enabled $UserActif
       
         #ecriture de la creation de l'utlisateur
         Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
-
-        #validé la création d'un utilisateur $samaccountname =$UtilisateurLogin
         Get-ADUser -Identity $UtilisateurLogin
-        # faire apres le premier test l'insertion du service et de l' OU desiré
 
         #creation du réprtoire partagé avec les droits de l'utilisateur 
         New-item F:\DataUsers\$UtilisateurLogin -ItemType Directory -Force
         New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin
 
         #inserer un utilisateur dans un groupe
-        Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurFonction ($UtilisateurNom $UtilisateurPrenom)"
-        Add-ADGroupMember $UtilisateurFonction -Members  "CN=$UtilisateurLogin,OU=$UtilisateurFonction,OU=Services,DC=ACME,DC=FR"
+        Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
+        Add-ADGroupMember $UtilisateurOU -Members  "CN=$UtilisateurLogin,OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
 
         # creation de l'utilisateur critique
         if ($UtilisateurCritique -eq 'oui')
@@ -194,13 +201,9 @@ function CreaUserSeul  {
         }
 
         Write-Host " l'uilisateur "$UtilisateurLogin $UtilisateurEmail" a ete cree"
-        Write-Host " fonction CreaUserSeul"
-
-
+        
                        }
 # importation du fichier CSV
-#param ($chemin= ' ')
-
 function Get-info () {
                             param (
                                     [string] $n ,
@@ -217,10 +220,10 @@ function Get-info () {
        if ($n -eq ' ' )
      
           {
-          # Read-Host "vueillez donner des infos :" $chemin
+          # Read-Host "veuillez donner des infos :" $chemin
           write-host "le chemin d'importation est connu  C:\Scripts\AD_USERS\Utilisateurs.csv"
           # création de la variable chemin du fichier CSV 
-          # à voir avec un Read-host pour en faire une varialbe d'appel fonction
+          # à voir avec un Read-host pour en faire une variable d'appel fonction
           $CSVFile = "C:\Scripts\AD_USERS\Utilisateurs.csv"
           $CSVData = Import-CSV -Path $CSVFile -Delimiter ";" -Encoding UTF8 
           Write-Host "Fichier Importé"
@@ -239,10 +242,7 @@ function Get-info () {
                     $UtilisateurFonction = $Utilisateur.Fonction
                     $UtilisateurOU = $Utilisateur.Departement 
                     $UtilisateurCritique =$Utilisateur.Critique 
-                    # Vérifier la présence de l'utilisateur dans l'AD
-                    # fonction de test utilisateur
-
-                    
+                                      
                     # appel function ExistUser
                     if (Get-ADUser -Filter { SamAccountName -eq $UtilisateurLogin }) 
                         {
@@ -274,15 +274,4 @@ function Get-info () {
      
   
    Get-info -n $n
-
-
-#verification du nombre d'utilisateur dans la liste
-#a effacer plus tard
-# " il y a {0} utilisateurs dans le tableau" -F ($CSVData.count)
-
-
-
-
-                    
-
-
+  
