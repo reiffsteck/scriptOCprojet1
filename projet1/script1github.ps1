@@ -43,8 +43,7 @@ function CreaUser
              Write-Output $UserActif
         }
     # creation de l'utilisateur, coeur de la fonction
-    # remplacer utilisateur fonction
-    New-ADUser -Name $UtilisateurLogin `
+       New-ADUser -Name $UtilisateurLogin `
                -DisplayName $UtilisateurLogin `
                -GivenName $UtilisateurPrenom `
                -Surname $UtilisateurNom `
@@ -68,8 +67,7 @@ function CreaUser
 
     #validé la création d'un utilisateur $samaccountname =$UtilisateurLogin
     Get-ADUser -Identity $UtilisateurLogin
-    # faire apres le premier test l'insertion du service et de l' OU desiré
-
+    
     #creation du réprtoire partagé avec les droits de l'utilisateur 
     New-item F:\DataUsers\$UtilisateurLogin -ItemType Directory -Force
     New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin
@@ -82,7 +80,6 @@ function CreaUser
     if ($UtilisateurCritique -eq 'oui')
         {
             Write-Output "l'utilisateur" $UtilisateurLogin "est critique"
-            #Add-ADGroupMember Critique -Members "CN=$UtilisateurLogin,OU=Critique,OU=Services,DC=ACME,DC=FR"
             Add-ADGroupMember -Identity "CN=Critique,OU=Critique,OU=Services,DC=acme,DC=fr" -Members $UtilisateurLogin
         }
         else 
@@ -98,7 +95,7 @@ function CreaUser
                   }
                 
 
-# declaration de la fonction 2 exituser
+# declaration de la fonction exituser
 function ExistUser {
 
     #lister les variables
@@ -125,12 +122,11 @@ function CreaUserSeul  {
         [string] $UtilisateurCritique ,
         [string] $UtilisateurActif = $Utilisateur.Actif ,
         [boolean] $UserActif
- # a completer pour faire une creation plus fine
+ 
           )
 
         write-host " Vous avez choisi de créer un utilsateurs manuellement "
         Write-host "Voic les questions pour la creation de l'utilisateur"
-        #$UtilisateurNom =Read-Host "quel est le nom de l'utilisateur"
         Write-Output "Le nom est " $UtilisateurNom 
         $UtilisateurPrenom =Read-Host " quel est le prenom" 
         Write-Output " le prenom est " $UtilisateurPrenom
@@ -155,8 +151,7 @@ function CreaUserSeul  {
             $UserActif = $false
             Write-Output $UtilisateurActif " n'est pas actif"
         }
-       # voir pour OU apres les tests
-
+       
       # CreaUserSeul
       New-ADUser -Name $UtilisateurLogin `
                 -DisplayName $UtilisateurLogin `
@@ -220,17 +215,11 @@ function Get-info () {
        if ($n -eq ' ' )
      
           {
-          # Read-Host "veuillez donner des infos :" $chemin
           write-host "le chemin d'importation est connu  C:\Scripts\AD_USERS\Utilisateurs.csv"
-          # création de la variable chemin du fichier CSV 
-          # à voir avec un Read-host pour en faire une variable d'appel fonction
           $CSVFile = "C:\Scripts\AD_USERS\Utilisateurs.csv"
           $CSVData = Import-CSV -Path $CSVFile -Delimiter ";" -Encoding UTF8 
           Write-Host "Fichier Importé"
-          " il y a {0} utilisateurs dans le tableau" -F ($CSVData.count)
-
-          # condition foreach à faire car le fichier n'est pas indiqué dans la ligne de commande en terminal powershell
-
+           
           Foreach ($Utilisateur in $CSVData)
                {
                     "{0} est un utilisateur" -F $Utilisateur
@@ -265,8 +254,7 @@ function Get-info () {
        
        {  
            CreaUserSeul
-           #FINIR LA FONCTION DE CREATION USER MANUEL
-       # introduire à la fin la fonction creauser
+           
         }
 
                      }
