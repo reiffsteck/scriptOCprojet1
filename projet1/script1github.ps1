@@ -219,6 +219,7 @@ function Get-info () {
           $CSVFile = "C:\Scripts\AD_USERS\Utilisateurs.csv"
           $CSVData = Import-CSV -Path $CSVFile -Delimiter ";" -Encoding UTF8 
           Write-Host "Fichier Importé"
+          
            
           Foreach ($Utilisateur in $CSVData)
                {
