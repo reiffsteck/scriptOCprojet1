@@ -81,9 +81,8 @@ function CreaUser
                 else 
                 {
                     Write-Output "l'utilisateur " $UtilisateurLogin "n'est pas un utilisateur critique"
-                    Write-Output $UtilisateurCritique
                 }
-                
+
     Write-Host " l'utilisateur $UtilisateurLogin $UtilisateurEmail a ete cree"
          
 }
