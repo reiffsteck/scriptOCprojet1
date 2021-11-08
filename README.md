@@ -7,6 +7,7 @@ Ce script a été réalisé dans le cadre d'un projet "script 1" projet 7 pour O
 
 # Pré-requis
 serveur Windows 2019 avec Active Directory
+
 ***
 
 # Installation / Explication 
