@@ -138,24 +138,32 @@ function CreaUserSeul  {
             $UtilisateurEmail = "$UtilisateurLogin@acme.fr"
             Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
             Write-host " Vous devez définir le service de l'utilisateur, vous avez plusieurs choix"
-            Write-host " DirectionFinanciere, DirectionGenerale, DirectionMarketing, DirectionTechnique, RessourcesHumaines"
-            $UtilisateurOU =Read-Host "quel est le service, choix multiple"
+                    Write-output "Stagiaires 1 "
+                    Write-output "DirectionFinanciere 2 "
+                    Write-output "DirectionGenerale 3 " 
+                    Write-output "DirectionMarketing 4 "
+                    Write-output "DirectionTechnique 5 "
+                    Write-output "RessourcesHumaines 6 "
+                    $UtilisateurOU =Read-Host "Entrez un nombre entre 1 et 6"
+                    switch ($UtilisateurOU)
+                    {
+                        1 { $UtilisateurOU="Stagiaires"}
+                        2 { $UtilisateurOU="DirectionFinanciere"}
+                        3 { $UtilisateurOU="DirectionGenerale"}
+                        4 { $UtilisateurOU="DirectionMarketing"}
+                        5 { $UtilisateurOU="DirectionTechnique"}
+                        6 { $UtilisateurOU="RessourcesHumaines"}
+                    }     
             Write-Output "le service de l'utilsateur est " $UtilisateurOU
-            $UtilisateurCritique =Read-Host "L'utilsateur est il critique? Si oui , ecrire critique"
-            $UtilsateurActif = Read-Host "l'utilisateur est il actif oui ou non"
+            Write-Host "Vous devez définir si l'utilisateur est critique"
+            Write-Output " 1 pour oui, 2 pour non"
+            $UtilisateurCritique =Read-Host "L'utilsateur est il critique? 1 ou 2"
+            switch ($UtilisateurCritique)
+            { 
+                1 { $UtilisateurCritique ="oui"}
+                2 { $UtilisateurCritique ="non"}
+            }
          }
-
-        if ($utilsateurActif -eq 'oui')
-        { 
-            $UserActif = $true
-            
-        }
-        else 
-        { 
-            $UserActif = $false
-            
-        }
-       
       # CreaUserSeul
       New-ADUser -Name $UtilisateurLogin `
                 -DisplayName $UtilisateurLogin `
@@ -173,16 +181,15 @@ function CreaUserSeul  {
                 -PasswordNeverExpires $true `
                 -ChangePasswordAtLogon $false `
                 -CannotChangePassword $false `
-                -Enabled $UserActif
+                -Enabled $true
       
         #ecriture de la creation de l'utlisateur
         Write-Host " "
         Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
-        Get-ADUser -Identity $UtilisateurLogin
-
+        
         #creation du réprtoire partagé avec les droits de l'utilisateur 
-        New-item F:\DataUsers\$UtilisateurLogin -ItemType Directory -Force
-        New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin
+        New-item F:\DataUsers\$UtilisateurLogin -ItemType Directory -Force -ErrorAction SilentlyContinue
+        New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin -ErrorAction SilentlyContinue
 
         #inserer un utilisateur dans un groupe
         Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
