@@ -24,7 +24,7 @@ Deux méthodes pour l'utilisation du script , soit silencieuse ou interactif en 
 1.Script Silencieux
 
 Le script se lance soit de manière silencieuse de la manière suivante 
-.\script1github.ps1 ou ./scriptgithub.ps1 >c:\Scripts\AD_USERS\script1.txt si l'on veut récupérer le résultat du script.
+./script1github.ps1 ou ./scriptgithub.ps1 >c:\Scripts\AD_USERS\script1.txt si l'on veut récupérer le résultat du script.
 
 2.Script Interactif
 
