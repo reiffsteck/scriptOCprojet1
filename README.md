@@ -60,16 +60,19 @@ Il est ajouter aux différents groupes de l'OU selon les éléments définis dan
 
 
 2.ExistUser
+
 Fonction qui indique simplement que l'utilisateur existe déjà. Le test de son existence ou non dans l'AD est dans la fonction Get-info
 
 
 3.CreaUserSeul
+
 Script de création d'un seul utilisateur à partir des renseignements fournis par l'opérateur. On demande le nom, prénom, login. A partir de ce point , on teste l'existence de l'tulisateur dans l'AD. S'il existe , sorti du programme. Sinon, on poursuit les questions pour connaitre l'OU d'appartenance et si l'utilisateur est Critique. Accès spéciale à toutes les OU.
 De base l'utilisateur est crée actif. Création d'un dossier partagé pour chaque utilisateur sous f:\DATAUSERS, le nom du répertoire et du partage correspond au nom de l'utilisateur. Puis l'utilisateur est ajouté dans son OU et dans l'OU ACMEGroup.
 Test sur la question pour connaitre si l'utilisateur est Critique, c'est à dire avoir accès à toutes les OU.
 
 
 4.Get-info
+
 Cette fonction détecte si l'appel du script a été réalisé avec un nom pour la création d'un seul utilisateur, $n. Si $n est vide , le fichier utilisateurs.csv est utilisé comme base pour la création de tous les utilisateurs.
 
 Les champs suivants seront utilisés dans le fichier *.CSV : Prenom, Nom, Fonction, Departement, Critique, Actif
