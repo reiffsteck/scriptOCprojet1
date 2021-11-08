@@ -8,6 +8,8 @@ Ce script a été réalisé dans le cadre d'un projet "script 1" projet 7 pour O
 serveur Windows 2019 avec Active Directory
 
 Création d'un fichier utilisateurs.CSV encodée UF8 avec ; comme séparateur. La conversion du fichier peut etre réalisé depuis Excel.
+Le détail des champs dans le fichier *.CSV est expliqué dans le paragraphe Installation puis CreaUser
+
 Le fichier sera placé dans le répertoire c:\Scripts\AD_USERS
 
 Le script fonctionne aussi bien en silencieux que en mode interactif, le détail d'utilisation est expliqué dans le paragraphe suivant.
@@ -30,7 +32,6 @@ Le détail des renseignements se trouve dans le paragraphe suivant à la fonctio
 ***
 # Installation / Explication 
 
-
 4 fonctions principales
 
 CreaUser
@@ -38,13 +39,28 @@ ExistUser
 CreaUserSeul
 Get-info
 
-CreaUser
+1.CreaUser
 
-ExistUser
+création de l'utilisateur en mode silencieux depuis le fichier *.CSV.
 
-CreaUserSeul
+Les champs suivants seront utilisés dans le fichier *.CSV : Prenom, Nom, Fonction, Departement, Critique, Actif
 
-Get-iinfo
+Lors de la céation de l'utilisateur les champs suivants seront déduites à partir des données de fichier *.CSV:
+
+Name, DisplayName, GivenName, Surname, UserPrincipalName, SamAccountName, EmailAdress, Description, Office, Departement, Activation du compte o/n, chemin de l'unité d'organisation d'appartenance
+
+Eléments prédéfinis : 
+
+Email @acme.fr, mot de passe , Company ACME, Mot de passe n'expire jamais, Ne pas changer le mot de passe au login, Ne pas changer de mot de passe
+
+Création d'un répertoire partagé pour chaque utilisateur sous f:\DATAUSERS, le nom du répertoire et du partage correspond au nom de l'utilisateur.
+Il est ajouter aux différents groupex de l'OU selon les éléments définis dans le fichier utilisateurs.csv
+
+2.ExistUser
+
+3.CreaUserSeul
+
+4.Get-iinfo
 
 ***
 
