@@ -29,18 +29,14 @@ function CreaUser
         [string] $UtilisateurActif = $Utilisateur.Actif ,
         [boolean] $UserActif
           )
-          # a completer pour faire une creation plus fine
+          
         if ($UtilisateurActif -eq 'oui' )
         { 
-        Write-Output $UtilisateurActif
             $UserActif = $true
-            Write-Output $UserActif
         }
         else 
         { 
-           Write-Output $UtilisateurActif
             $UserActif = $false
-             Write-Output $UserActif
         }
     # creation de l'utilisateur, coeur de la fonction
        New-ADUser -Name $UtilisateurLogin `
@@ -60,39 +56,37 @@ function CreaUser
                -ChangePasswordAtLogon $false `
                -CannotChangePassword $false `
                -Enabled $UserActif
-   
+               
+            #ecriture de la creation de l'utlisateur
+            Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)et il est actif $UserActif"
 
-    #ecriture de la creation de l'utlisateur
-    Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
+            #validé la création d'un utilisateur $samaccountname =$UtilisateurLogin
+            Get-ADUser -Identity $UtilisateurLogin
+            
+            #creation du réprtoire partagé avec les droits de l'utilisateur 
+            New-item F:\DataUsers\$UtilisateurLogin -ItemType Directory -Force
+            New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin
 
-    #validé la création d'un utilisateur $samaccountname =$UtilisateurLogin
-    Get-ADUser -Identity $UtilisateurLogin
-    
-    #creation du réprtoire partagé avec les droits de l'utilisateur 
-    New-item F:\DataUsers\$UtilisateurLogin -ItemType Directory -Force
-    New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin
+            #inserer un utilisateur dans un groupe
+            Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
+            Add-ADGroupMember  $UtilisateurOU -Members  "CN=$UtilisateurLogin,OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
+            Add-ADGroupMember -Identity  "CN=ACMEGroup,OU=ACMEGroup,OU=Services,DC=ACME,DC=FR" -Members $UtilisateurLogin
 
-    #inserer un utilisateur dans un groupe
-    Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
-    Add-ADGroupMember  $UtilisateurOU -Members  "CN=$UtilisateurLogin,OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
-
-     # creation de l'utilisateur critique
-    if ($UtilisateurCritique -eq 'oui')
-        {
-            Write-Output "l'utilisateur" $UtilisateurLogin "est critique"
-            Add-ADGroupMember -Identity "CN=Critique,OU=Critique,OU=Services,DC=acme,DC=fr" -Members $UtilisateurLogin
-        }
-        else 
-        {
-            Write-Output "l'utilisateur " $UtilisateurLogin "n'est pas un utilisateur critique"
-            Write-Output $UtilisateurCritique
-        }
-
-
+            # creation de l'utilisateur critique
+            if ($UtilisateurCritique -eq 'oui')
+                {
+                    Write-Output "l'utilisateur" $UtilisateurLogin "est critique"
+                    Add-ADGroupMember -Identity "CN=Critique,OU=Critique,OU=Services,DC=acme,DC=fr" -Members $UtilisateurLogin
+                }
+                else 
+                {
+                    Write-Output "l'utilisateur " $UtilisateurLogin "n'est pas un utilisateur critique"
+                    Write-Output $UtilisateurCritique
+                }
+                
     Write-Host " l'utilisateur $UtilisateurLogin $UtilisateurEmail a ete cree"
-    Write-Host " fonction CreaUser"
-      
-                  }
+         
+}
                 
 
 # declaration de la fonction exituser
@@ -106,7 +100,6 @@ function ExistUser {
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr"                
           )
                  Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail existe deja dans L'AD"
-                 Write-Host "fonction ExistUser"
                     }   
 
 function CreaUserSeul  {
@@ -182,6 +175,7 @@ function CreaUserSeul  {
         #inserer un utilisateur dans un groupe
         Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
         Add-ADGroupMember $UtilisateurOU -Members  "CN=$UtilisateurLogin,OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
+        Add-ADGroupMember -Identity  "CN=ACMEGroup,OU=ACMEGroup,OU=Services,DC=ACME,DC=FR" -Members $UtilisateurLogin
 
         # creation de l'utilisateur critique
         if ($UtilisateurCritique -eq 'oui')
