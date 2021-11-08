@@ -3,6 +3,7 @@
 ***
 # Pour Commencer
 Ce script a été réalisé dans le cadre d'un projet "script 1" projet 7 pour OpenClassrooms
+Le script est accompagné du fichier utilisateurs .csv, comme exemple
 ***
 # Pré-requis
 serveur Windows 2019 avec Active Directory
