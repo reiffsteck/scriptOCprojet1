@@ -1,5 +1,5 @@
 ﻿param ( 
-    [string ]$n = ' ' , 
+    [string ] $n = ' ' , 
     [string] $UtilisateurPrenom ,
     [string] $UtilisateurNom  ,
     [string] $UtilisateurLogin ,
@@ -99,6 +99,7 @@ function ExistUser {
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr"                
           )
                  Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail existe deja dans L'AD"
+                 exit
                     }   
 
 function CreaUserSeul  {
@@ -123,7 +124,16 @@ function CreaUserSeul  {
         $UtilisateurPrenom =Read-Host " quel est le prenom" 
         Write-Output " le prenom est " $UtilisateurPrenom
         $UtilisateurLogin =Read-Host " quel est le login de l'utilisateur"
-        Write-Output "le login est" $UtilisateurLogin
+        
+        if (Get-ADUser -Filter { SamAccountName -eq $UtilisateurLogin }) 
+        {
+            Write-Output "le login est" $UtilisateurLogin
+        }
+        else
+         {
+            ExistUser
+         }
+
         $UtilisateurEmail = "$UtilisateurLogin@acme.fr"
         Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
         Write-host " Vous devez définir le service de l'utilisateur, vous avez plusieurs choix"
@@ -164,6 +174,8 @@ function CreaUserSeul  {
                 -Enabled $UserActif
       
         #ecriture de la creation de l'utlisateur
+
+
         Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
         Get-ADUser -Identity $UtilisateurLogin
 
@@ -236,7 +248,7 @@ function Get-info () {
                     #appel fonction CreaUser
                         { 
                        
-                        CreaUser
+                            CreaUser
 
                         }
                }
@@ -246,9 +258,8 @@ function Get-info () {
 
        else 
        
-       {  
+        {  
            CreaUserSeul
-           
         }
 
                      }
