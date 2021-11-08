@@ -136,12 +136,12 @@ function CreaUserSeul  {
         if ($utilsateurActif -eq 'oui')
         { 
             $UserActif = $true
-            Write-output $UtilisateurActif " est actif"
+            
         }
         else 
         { 
             $UserActif = $false
-            Write-Output $UtilisateurActif " n'est pas actif"
+            
         }
        
       # CreaUserSeul
