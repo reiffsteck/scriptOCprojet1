@@ -1,4 +1,4 @@
-param ( 
+﻿param ( 
     [string ] $n = ' ' , 
     [string] $UtilisateurPrenom ,
     [string] $UtilisateurNom  ,
@@ -59,13 +59,10 @@ function CreaUser
                
             #ecriture de la creation de l'utlisateur
             Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)et il est actif $UserActif"
-
-            #validé la création d'un utilisateur $samaccountname =$UtilisateurLogin
-            Get-ADUser -Identity $UtilisateurLogin
-            
+           
             #creation du réprtoire partagé avec les droits de l'utilisateur 
-            New-item F:\DataUsers\$UtilisateurLogin -ItemType Directory -Force
-            New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin
+            New-item F:\DataUsers\$UtilisateurLogin -ItemType Directory -Force -ErrorAction SilentlyContinue
+            New-SmbShare -Path f:\DATAUSERS\$UtilisateurLogin -Name $UtilisateurLogin -FullAccess $UtilisateurLogin -ErrorAction SilentlyContinue
 
             #inserer un utilisateur dans un groupe
             Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
@@ -84,12 +81,13 @@ function CreaUser
                 }
 
     Write-Host " l'utilisateur $UtilisateurLogin $UtilisateurEmail a ete cree"
+    Write-Host " "
          
 }
                 
 
-# declaration de la fonction exituser
-function ExistUser {
+# declaration de la fonction Exituser
+function ExitUser {
 
     #lister les variables
     param (
@@ -98,8 +96,10 @@ function ExistUser {
         [string] $UtilisateurLogin = ($UtilisateurPrenom).Substring(0, 1) + $UtilisateurNom ,
         [string] $UtilisateurEmail = "$UtilisateurLogin@acme.fr"                
           )
-                 Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail existe deja dans L'AD"
-                 exit
+        Write-Host " "
+        Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail existe deja dans L'AD"
+        Write-Host " "
+                 
                     }   
 
 function CreaUserSeul  {
@@ -114,6 +114,7 @@ function CreaUserSeul  {
         [string] $UtilisateurOU ,
         [string] $UtilisateurCritique ,
         [string] $UtilisateurActif = $Utilisateur.Actif ,
+        [string] $UtilisateurExist,
         [boolean] $UserActif
  
           )
@@ -123,26 +124,28 @@ function CreaUserSeul  {
         Write-Output "Le nom est " $UtilisateurNom 
         $UtilisateurPrenom =Read-Host " quel est le prenom" 
         Write-Output " le prenom est " $UtilisateurPrenom
-        $UtilisateurLogin =Read-Host " quel est le login de l'utilisateur"
-        
-        if (Get-ADUser -Filter { SamAccountName -eq $UtilisateurLogin }) 
+        $UtilisateurLogin = Read-Host " quel est le login de l'utilisateur"
+        # verification si l'utilisateur existe
+        $UtilisateurExist = $UtilisateurLogin
+          if ($UtilisateurExist = Get-ADUser -Filter { SamAccountName -eq $UtilisateurLogin }) 
+       
         {
-            Write-Output "le login est" $UtilisateurLogin
+            Write-Output "le login est" $UtilisateurLogin "l'utilisateur existe"
+            exit
         }
         else
          {
-            ExistUser
+            Write-Output "le login est" $UtilisateurLogin "l'utilisateur nexiste pas"
+            $UtilisateurEmail = "$UtilisateurLogin@acme.fr"
+            Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
+            Write-host " Vous devez définir le service de l'utilisateur, vous avez plusieurs choix"
+            Write-host " DirectionFinanciere, DirectionGenerale, DirectionMarketing, DirectionTechnique, RessourcesHumaines"
+            $UtilisateurOU =Read-Host "quel est le service, choix multiple"
+            Write-Output "le service de l'utilsateur est " $UtilisateurOU
+            $UtilisateurCritique =Read-Host "L'utilsateur est il critique? Si oui , ecrire critique"
+            $UtilsateurActif = Read-Host "l'utilisateur est il actif oui ou non"
          }
 
-        $UtilisateurEmail = "$UtilisateurLogin@acme.fr"
-        Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
-        Write-host " Vous devez définir le service de l'utilisateur, vous avez plusieurs choix"
-        Write-host " DirectionFinanciere, DirectionGenerale, DirectionMarketing, DirectionTechnique, RessourcesHumaines"
-        $UtilisateurOU =Read-Host "quel est le service, choix multiple"
-        Write-Output "le service de l'utilsateur est " $UtilisateurOU
-        $UtilisateurCritique =Read-Host "L'utilsateur est il critique? Si oui , ecrire critique"
-        $UtilsateurActif = Read-Host "l'utilisateur est il actif oui ou non"
-        
         if ($utilsateurActif -eq 'oui')
         { 
             $UserActif = $true
@@ -174,8 +177,7 @@ function CreaUserSeul  {
                 -Enabled $UserActif
       
         #ecriture de la creation de l'utlisateur
-
-
+        Write-Host " "
         Write-Output "Creation de l'utilisateur : $UtilisateurLogin ($UtilisateurNom $UtilisateurPrenom)"
         Get-ADUser -Identity $UtilisateurLogin
 
@@ -197,7 +199,6 @@ function CreaUserSeul  {
         else 
         {
             Write-Output "l'utilisateur " $UtilisateurLogin "n'est pas un utilisateur critique"
-            Write-Output $UtilisateurCritique
         }
 
         Write-Host " l'uilisateur "$UtilisateurLogin $UtilisateurEmail" a ete cree"
@@ -220,10 +221,9 @@ function Get-info () {
        if ($n -eq ' ' )
      
           {
-          write-host "le chemin d'importation est connu  C:\Scripts\AD_USERS\Utilisateurs.csv"
+          
           $CSVFile = "C:\Scripts\AD_USERS\Utilisateurs.csv"
           $CSVData = Import-CSV -Path $CSVFile -Delimiter ";" -Encoding UTF8 
-          Write-Host "Fichier Importé"
           "il y a {0} utilisateurs dans le tableau " -F ($CSVData.count)
            
           Foreach ($Utilisateur in $CSVData)
@@ -236,21 +236,18 @@ function Get-info () {
                     $UtilisateurMotDePasse = "Ricoh80700"
                     $UtilisateurFonction = $Utilisateur.Fonction
                     $UtilisateurOU = $Utilisateur.Departement 
-                    $UtilisateurCritique =$Utilisateur.Critique 
-                                      
-                    # appel function ExistUser
-                    if ($UtilisateurLogin = Get-ADUser -Filter { SamAccountName -eq $UtilisateurLogin }) 
-                        {
-                            ExistUser
-
-                        }
-                    else 
-                    #appel fonction CreaUser
-                        { 
+                    $UtilisateurCritique =$Utilisateur.Critique
+                    # verification si l'utilisateur existe
+                    $UtilisateurExist = $UtilisateurLogin
+                    if ($UtilisateurExist = Get-ADUser -Filter { SamAccountName -eq $UtilisateurLogin }) 
+                    {
                        
-                            CreaUser
-
-                        }
+                        ExitUser
+                    }
+                    else
+                    {
+                        CreaUser
+                    }    
                }
 
 
