@@ -13,7 +13,6 @@
       )
                  
 Clear-Host
-
 #declaration de la fonction Creauser
 function CreaUser
 {
