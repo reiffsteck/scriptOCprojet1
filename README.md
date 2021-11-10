@@ -19,11 +19,11 @@ Le script fonctionne aussi bien en silencieux que en mode interactif, le détail
 ***
 # Démarrage
 comment on lance le script
-Deux méthodes pour l'utilisation du script , soit silencieuse ou interactif en indiquant le nom du nouvel utilisateur
+Deux méthodes pour l'utilisation du script , soit silencieux ou interactif en indiquant le nom du nouvel utilisateur
 
 1.Script Silencieux
 
-Le script se lance soit de manière silencieuse de la manière suivante 
+Le script se lance soit de la manière suivante 
 ./script1github.ps1 ou ./scriptgithub.ps1 >c:\Scripts\AD_USERS\script1.txt si l'on veut récupérer le résultat du script.
 
 2.Script Interactif
@@ -48,7 +48,7 @@ création de l'utilisateur en mode silencieux depuis le fichier *.CSV.
 
 Les champs suivants seront utilisés dans le fichier *.CSV : Prenom, Nom, Fonction, Departement, Critique, Actif
 
-Lors de la céation de l'utilisateur les champs suivants seront déduites à partir des données de fichier *.CSV:
+Lors de la céation de l'utilisateur, les champs suivants seront déduits à partir des données du fichier *.CSV:
 
 Name, DisplayName, GivenName, Surname, UserPrincipalName, SamAccountName, EmailAdress, Description, Office, Departement, Activation du compte o/n, chemin de l'unité d'organisation d'appartenance
 
@@ -67,7 +67,7 @@ Fonction qui indique simplement que l'utilisateur existe déjà. Le test de son 
 
 3.CreaUserSeul
 
-Script de création d'un seul utilisateur à partir des renseignements fournis par l'opérateur. On demande le nom, prénom, login. A partir de ce point , on teste l'existence de l'tulisateur dans l'AD. S'il existe , sorti du programme. Sinon, on poursuit les questions pour connaitre l'OU d'appartenance et si l'utilisateur est Critique. Accès spéciale à toutes les OU.
+Script de création d'un seul utilisateur à partir des renseignements fournis par l'opérateur. On demande le nom, prénom, login. A partir de ce point , on teste l'existence de l'utilisateur dans l'AD. S'il existe , sorti du programme. Sinon, on poursuit les questions pour connaitre l'OU d'appartenance et si l'utilisateur est Critique. Accès spéciale à toutes les OU.
 De base l'utilisateur est crée actif. Création d'un dossier partagé pour chaque utilisateur sous f:\DATAUSERS, le nom du répertoire et du partage correspond au nom de l'utilisateur. Puis l'utilisateur est ajouté dans son OU et dans l'OU ACMEGroup.
 Test sur la question pour connaitre si l'utilisateur est Critique, c'est à dire avoir accès à toutes les OU.
 
