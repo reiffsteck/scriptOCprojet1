@@ -65,7 +65,7 @@ function CreaUser
 
             #inserer un utilisateur dans un groupe
             Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
-            Add-ADGroupMember  $UtilisateurOU -Members  "CN=$UtilisateurLogin,OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
+            Add-ADGroupMember  $UtilisateurOU -Members  "CN=$UtilisateurLogin,OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR" 
             Add-ADGroupMember -Identity  "CN=ACMEGroup,OU=ACMEGroup,OU=Services,DC=ACME,DC=FR" -Members $UtilisateurLogin
 
             # creation de l'utilisateur critique
@@ -115,7 +115,6 @@ function CreaUserSeul  {
         [string] $UtilisateurActif = $Utilisateur.Actif ,
         [string] $UtilisateurExist,
         [boolean] $UserActif
- 
           )
 
         write-host " Vous avez choisi de créer un utilsateurs manuellement "
@@ -200,7 +199,7 @@ function CreaUserSeul  {
         if ($UtilisateurCritique -eq 'oui')
         {
             Write-Output "l'utilisateur" $UtilisateurLogin "est critique"
-            Add-ADGroupMember -Identity "CN=Critique,OU=Critique,OU=Services,DC=acme,DC=fr" -Members $UtilisateurLogin
+            Add-ADGroupMember -Identity "CN=Critique,OU=Critique,OU=Services,DC=acme,DC=fr" -Members $UtilisateurLogin -ErrorAction SilentlyContinue
         }
         else 
         {
@@ -221,7 +220,9 @@ function Get-info () {
                                     [string] $UtilisateurMotDePasse = "Ricoh80700" ,
                                     [string] $UtilisateurFonction ,
                                     [string] $UtilisateurOU ,
-                                    [string] $UtilisateurCritique 
+                                    [string] $UtilisateurCritique,
+                                    [string] $UtilisateurExist
+                    
                                   )
                                   Write-Host $n
        if ($n -eq ' ' )
