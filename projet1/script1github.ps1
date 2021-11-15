@@ -13,6 +13,9 @@
       )
                  
 Clear-Host
+$ErrorActionPreference = "SilentlyContinue"
+$Error.Clear()  #purge des erreurs
+
 #declaration de la fonction Creauser
 function CreaUser
 {
@@ -81,7 +84,7 @@ function CreaUser
 
     Write-Host " l'utilisateur $UtilisateurLogin $UtilisateurEmail a ete cree"
     Write-Host " "
-         
+    
 }
                 
 
@@ -98,7 +101,7 @@ function ExitUser {
         Write-Host " "
         Write-Host " l'uilisateur $UtilisateurLogin $UtilisateurEmail existe deja dans L'AD"
         Write-Host " "
-                 
+        SortieErreur         
                     }   
 
 function CreaUserSeul  {
@@ -133,7 +136,7 @@ function CreaUserSeul  {
         }
         else
          {
-            Write-Output "le login est" $UtilisateurLogin "l'utilisateur nexiste pas"
+            Write-Output "le login est" $UtilisateurLogin "l'utilisateur n existe pas"
             $UtilisateurEmail = "$UtilisateurLogin@acme.fr"
             Write-Output "le mail de l'utilsateur est" $UtilisateurEmail
             Write-host " Vous devez définir le service de l'utilisateur, vous avez plusieurs choix"
@@ -152,7 +155,8 @@ function CreaUserSeul  {
                         4 { $UtilisateurOU="DirectionMarketing"}
                         5 { $UtilisateurOU="DirectionTechnique"}
                         6 { $UtilisateurOU="RessourcesHumaines"}
-                    }     
+                    } 
+                        
             Write-Output "le service de l'utilsateur est " $UtilisateurOU
             Write-Host "Vous devez définir si l'utilisateur est critique"
             Write-Output " 1 pour oui, 2 pour non"
@@ -162,6 +166,7 @@ function CreaUserSeul  {
                 1 { $UtilisateurCritique ="oui"}
                 2 { $UtilisateurCritique ="non"}
             }
+            
          }
       # CreaUserSeul
       New-ADUser -Name $UtilisateurLogin `
@@ -194,7 +199,6 @@ function CreaUserSeul  {
         Write-Output "Insertion de l'utilisateur dans le groupe: $UtilisateurOU ($UtilisateurNom $UtilisateurPrenom)"
         Add-ADGroupMember $UtilisateurOU -Members  "CN=$UtilisateurLogin,OU=$UtilisateurOU,OU=Services,DC=ACME,DC=FR"
         Add-ADGroupMember -Identity  "CN=ACMEGroup,OU=ACMEGroup,OU=Services,DC=ACME,DC=FR" -Members $UtilisateurLogin
-
         # creation de l'utilisateur critique
         if ($UtilisateurCritique -eq 'oui')
         {
@@ -250,10 +254,12 @@ function Get-info () {
                     {
                        
                         ExitUser
+                        
                     }
                     else
                     {
                         CreaUser
+                        SortieErreur
                     }    
                }
 
@@ -264,11 +270,31 @@ function Get-info () {
        
         {  
            CreaUserSeul
+           SortieErreur
         }
 
                      }
 
-     
+    Function SortieErreur( )
+    {
+        param ()
+    
+        
+        if($Error.Count -ieq 0)
+        {
+    
+        Write-Output "Code de sortie" $error[0] #affichage erreur
+        $LastExitCode 
+        }
+    
+        Else
+        {
+            Write-Host "Erreur:"
+            Write-Host $error[0] #affichage erreur
+            $LastexitCode
+            exit
+        }
+    }   
   
    Get-info -n $n
   
