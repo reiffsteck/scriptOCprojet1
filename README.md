@@ -35,7 +35,7 @@ Le détail des renseignements se trouve dans le paragraphe suivant à la fonctio
 ***
 # Installation / Explication 
 
-4 fonctions principales
+5 fonctions principales
 
 CreaUser
 ExistUser
@@ -87,6 +87,7 @@ Name, DisplayName, GivenName, Surname, UserPrincipalName, SamAccountName, EmailA
 On vérifie , avant de lancer la fonction CreUser, si l'utilisateur existe ou non. Sinon on appelle la fonction ExitUser.
 
 5.Gestion d'erreur
+
 Ajout d'une condition, qui teste s'il y a une erreur dans le déroulement du script.
 Elle renvoi un code ok , si tout c'est dérouler correctement, ou un code 1 en cas d'erreur, avec l'explication de l'erreur $error[0] et éventuellement le code de la commande incorrecte, renvoi les Exit Code de la commande. 
 
