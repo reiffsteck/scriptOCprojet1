@@ -41,6 +41,8 @@ CreaUser
 ExistUser
 CreaUserSeul
 Get-info
+Gestion d'erreur
+
 
 1.CreaUser
 
@@ -83,6 +85,10 @@ Lors de la céation de l'utilisateur les champs suivants seront déduites à par
 Name, DisplayName, GivenName, Surname, UserPrincipalName, SamAccountName, EmailAdress, Description, Office, Departement, Activation du compte o/n, chemin de l'unité d'organisation d'appartenance.
 
 On vérifie , avant de lancer la fonction CreUser, si l'utilisateur existe ou non. Sinon on appelle la fonction ExitUser.
+
+5.Gestion d'erreur
+Ajout d'une condition, qui teste s'il y a une erreur dans le déroulement du script.
+Elle renvoi un code ok , si tout c'est dérouler correctement, ou un code 1 en cas d'erreur, avec l'explication de l'erreur $error[0] et éventuellement le code de la commande incorrecte, renvoi les Exit Code de la commande. 
 
 ***
 
