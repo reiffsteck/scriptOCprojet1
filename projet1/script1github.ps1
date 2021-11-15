@@ -292,7 +292,7 @@ function Get-info () {
             Write-Host "Erreur:"
             Write-Host $error[0] #affichage erreur
             $LastexitCode
-            exit
+            exit 1
         }
     }   
   
